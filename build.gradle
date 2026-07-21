@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+}
+
+group = 'course.starter'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+dependencies {
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.46.0'
+    testImplementation 'io.cucumber:cucumber-java:7.34.4'
+    testImplementation 'io.cucumber:cucumber-testng:7.34.4'
+    testImplementation 'org.testng:testng:7.12.0'
+}
+
+dependencyLocking {
+    lockAllConfigurations()
+}
+
+tasks.named('test') {
+    useTestNG()
+}
+
+tasks.register('doctor') {
+    group = 'verification'
+    description = 'Muestra información útil para diagnosticar el entorno del curso.'
+
+    doLast {
+        def currentJava = JavaVersion.current()
+        def javaHome = System.getProperty('java.home')
+        def configuredJavaHome = System.getenv('JAVA_HOME') ?: '(no definido)'
+
+        println '=== Diagnóstico del entorno ==='
+        println "Sistema operativo : ${System.getProperty('os.name')} ${System.getProperty('os.version')} (${System.getProperty('os.arch')})"
+        println "Gradle            : ${gradle.gradleVersion}"
+        println "JVM de Gradle     : ${System.getProperty('java.version')} (${System.getProperty('java.vendor')})"
+        println "java.home         : ${javaHome}"
+        println "JAVA_HOME         : ${configuredJavaHome}"
+        println 'Java requerido    : 21 (Gradle Toolchain)'
+        println "Java activo       : ${currentJava.isCompatibleWith(JavaVersion.VERSION_21) ? 'compatible' : 'NO compatible: revisá JDK 21 y JAVA_HOME'}"
+        println "Chrome            : debe estar instalado; Selenium Manager resolverá ChromeDriver al ejecutar el test"
+        println '==============================='
+    }
+}

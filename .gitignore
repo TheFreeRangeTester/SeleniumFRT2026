@@ -1,0 +1,24 @@
+# Gradle y Java
+.gradle/
+build/
+out/
+*.class
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# VS Code (se conserva extensions.json)
+.vscode/*
+!.vscode/extensions.json
+
+# Sistema operativo y archivos temporales
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# Variables locales y secretos
+.env
+.env.*
+!.env.example
