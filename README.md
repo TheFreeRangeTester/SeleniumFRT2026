@@ -1,6 +1,9 @@
-# Selenium WebDriver con Java y Cucumber — starter
+# Selenium WebDriver con Java y Cucumber
 
-Este repositorio deja lista la infraestructura del curso. No contiene el framework ni la solución de los ejercicios: los vas a construir durante las clases.
+Este template deja lista la infraestructura del curso y contiene dos ramas:
+
+- `main`: es el punto de partida. No contiene el framework ni la solución de los ejercicios: los vas a construir durante las clases.
+- `solution`: contiene un modelo de referencia con la estructura del framework y Page Object Model, pero sin las pruebas funcionales que desarrollaremos contra la nueva página.
 
 ## Prerrequisitos
 
@@ -14,15 +17,29 @@ No hace falta instalar Gradle globalmente: el repositorio incluye Gradle Wrapper
 ## Crear y clonar tu repositorio
 
 1. En GitHub, pulsá **Use this template** y luego **Create a new repository**.
-2. Elegí el nombre y la visibilidad. **No selecciones “Include all branches”.**
+2. Elegí el nombre y la visibilidad y seleccioná **Include all branches** para recibir tanto `main` como `solution`.
 3. Copiá la URL de tu repositorio y clonalo:
 
 ```bash
 git clone URL_DE_TU_REPOSITORIO
 cd NOMBRE_DE_TU_REPOSITORIO
+git branch --all
+git switch main
 ```
 
-Si no tenés cuenta de GitHub, podés usar **Code → Download ZIP**, descomprimir el archivo y abrir esa carpeta. En ese caso no tendrás historial ni sincronización mediante Git.
+Trabajá normalmente sobre `main`. La rama `solution` es una referencia para consultar cuando se indique durante el curso:
+
+```bash
+git switch solution
+```
+
+Para volver al punto de trabajo:
+
+```bash
+git switch main
+```
+
+Si no tenés cuenta de GitHub, podés descargar cada rama por separado mediante **Code → Download ZIP**. En ese caso no tendrás historial ni sincronización mediante Git.
 
 ## Verificar el entorno
 
@@ -56,6 +73,8 @@ gradlew.bat test
 
 ## Qué está preparado y qué vas a construir
 
-El starter ya incluye Java Toolchain 21, Gradle Wrapper, Selenium, Cucumber integrado con TestNG, descubrimiento de tests y el diagnóstico `doctor`.
+La rama `main` ya incluye Java Toolchain 21, Gradle Wrapper, Selenium, Cucumber integrado con TestNG, descubrimiento de tests y el diagnóstico `doctor`.
 
 Durante el curso vas a crear los feature files, escenarios, step definitions, hooks, Page Objects y el resto del framework. Nada de eso viene resuelto acá.
+
+La rama `solution` muestra cómo organizar el ciclo de vida de WebDriver, los hooks, el runner y las clases base del Page Object Model. No incluye las pruebas de la página anterior ni resuelve los nuevos ejercicios.
