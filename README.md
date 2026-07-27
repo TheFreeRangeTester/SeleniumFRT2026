@@ -78,3 +78,29 @@ La rama `main` ya incluye Java Toolchain 21, Gradle Wrapper, Selenium, Cucumber 
 Durante el curso vas a crear los feature files, escenarios, step definitions, hooks, Page Objects y el resto del framework. Nada de eso viene resuelto acá.
 
 La rama `solution` muestra cómo organizar el ciclo de vida de WebDriver, los hooks, el runner y las clases base del Page Object Model. No incluye las pruebas de la página anterior ni resuelve los nuevos ejercicios.
+
+## Estructura de referencia de `solution`
+
+En esta rama, el modelo queda separado por responsabilidades:
+
+```text
+src/test/java/
+├── driver/DriverManager.java
+├── hooks/Hooks.java
+├── pages/BasePage.java
+├── runner/RunCucumberTest.java
+├── setup/SetupCheckTest.java
+└── steps/
+
+src/test/resources/
+├── cucumber.properties
+└── features/
+```
+
+- `DriverManager` crea una instancia de WebDriver por hilo y permite que los escenarios sean independientes.
+- `Hooks` abre Chrome antes de cada escenario, adjunta una captura si falla y siempre cierra el navegador.
+- `BasePage` recibe el driver por constructor y ofrece esperas y acciones Selenium reutilizables.
+- `RunCucumberTest` integra Cucumber con TestNG y genera reportes HTML y JSON dentro de `build/reports/cucumber`.
+- `SetupCheckTest` sigue siendo únicamente una comprobación técnica del entorno.
+
+Las páginas concretas, los step definitions y los escenarios se agregarán durante el curso para la aplicación nueva.
