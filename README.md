@@ -3,7 +3,8 @@
 Este template deja lista la infraestructura del curso y contiene dos ramas:
 
 - `main`: es el punto de partida. No contiene el framework ni la solución de los ejercicios: los vas a construir durante las clases.
-- `solution`: contiene un modelo de referencia con la estructura del framework y Page Object Model, pero sin las pruebas funcionales que desarrollaremos contra la nueva página.
+- `solution`: contiene el modelo terminado de referencia, con la estructura del framework,
+  un Page Object y una prueba funcional básica de login contra BuggyBank.
 
 ## Prerrequisitos
 
@@ -77,7 +78,9 @@ La rama `main` ya incluye Java Toolchain 21, Gradle Wrapper, Selenium, Cucumber 
 
 Durante el curso vas a crear los feature files, escenarios, step definitions, hooks, Page Objects y el resto del framework. Nada de eso viene resuelto acá.
 
-La rama `solution` muestra cómo organizar el ciclo de vida de WebDriver, los hooks, el runner y las clases base del Page Object Model. No incluye las pruebas de la página anterior ni resuelve los nuevos ejercicios.
+La rama `solution` muestra cómo organizar el ciclo de vida de WebDriver, los hooks, el
+runner y las clases base del Page Object Model. También incluye un ejemplo mínimo de
+login y validación del dashboard para los tres usuarios sandbox.
 
 ## Estructura de referencia de `solution`
 
@@ -88,19 +91,21 @@ src/test/java/
 ├── driver/DriverManager.java
 ├── hooks/Hooks.java
 ├── pages/BasePage.java
+├── pages/LoginPage.java
 ├── runner/RunCucumberTest.java
 ├── setup/SetupCheckTest.java
-└── steps/
+└── steps/LoginSteps.java
 
 src/test/resources/
 ├── cucumber.properties
-└── features/
+└── features/login.feature
 ```
 
 - `DriverManager` crea una instancia de WebDriver por hilo y permite que los escenarios sean independientes.
 - `Hooks` abre Chrome antes de cada escenario, adjunta una captura si falla y siempre cierra el navegador.
 - `BasePage` recibe el driver por constructor y ofrece esperas y acciones Selenium reutilizables.
+- `LoginPage` encapsula los elementos y acciones del login, además de la validación del dashboard.
+- `LoginSteps` conecta el lenguaje Gherkin con el Page Object.
+- `login.feature` parametriza el mismo flujo para los tres usuarios sandbox.
 - `RunCucumberTest` integra Cucumber con TestNG y genera reportes HTML y JSON dentro de `build/reports/cucumber`.
 - `SetupCheckTest` sigue siendo únicamente una comprobación técnica del entorno.
-
-Las páginas concretas, los step definitions y los escenarios se agregarán durante el curso para la aplicación nueva.

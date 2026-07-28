@@ -28,6 +28,10 @@ dependencyLocking {
 
 tasks.named('test') {
     useTestNG()
+    // Cucumber expone el test mediante una clase base de TestNG. Gradle no la
+    // detecta por anotaciones, por lo que delegamos el descubrimiento a TestNG.
+    scanForTestClasses = false
+    include '**/*Test.class'
 }
 
 tasks.register('doctor') {
