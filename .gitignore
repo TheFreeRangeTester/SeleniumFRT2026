@@ -8,9 +8,10 @@ out/
 .idea/
 *.iml
 
-# VS Code (se conserva extensions.json)
+# VS Code (se conserva la configuración compartida del curso)
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 
 # Sistema operativo y archivos temporales
 .DS_Store
