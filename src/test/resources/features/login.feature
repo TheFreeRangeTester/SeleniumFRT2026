@@ -7,7 +7,5 @@ Característica: Inicio de sesión
     Entonces veo el dashboard de "<nombre>"
 
     Ejemplos:
-      | email                     | password | nombre         |
-      | maria@buggybank.local     | Pass1234 | Maria Thompson |
-      | diego@buggybank.local     | Pass1234 | Diego Alvarez  |
-      | sofie@buggybank.local     | Pass1234 | Sofie Patel    |
+      | email                               | password                  | nombre           |
+      | tester-12e0e175@buggybank.local     | vsjroxlPY_We1WjXiAx7      | Temporary Tester |

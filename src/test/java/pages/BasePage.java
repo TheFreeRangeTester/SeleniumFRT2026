@@ -78,4 +78,8 @@ public abstract class BasePage {
     protected String getCurrentUrl() {
         return driver.getCurrentUrl();
     }
+
+    protected void waitForUrlEndingWith(String path) {
+        wait.until(currentDriver -> currentDriver.getCurrentUrl().endsWith(path));
+    }
 }

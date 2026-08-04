@@ -29,6 +29,7 @@ public class LoginPage extends BasePage {
         type(EMAIL_INPUT, email);
         type(PASSWORD_INPUT, password);
         click(LOGIN_BUTTON);
+        waitForUrlEndingWith("/dashboard");
     }
 
     public boolean isDashboardDisplayedFor(String name) {
