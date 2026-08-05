@@ -32,6 +32,18 @@ tasks.named('test') {
     // detecta por anotaciones, por lo que delegamos el descubrimiento a TestNG.
     scanForTestClasses = false
     include '**/*Test.class'
+    exclude '**/SetupCheckTest.class'
+}
+
+tasks.register('setupCheck', Test) {
+    group = 'verification'
+    description = 'Abre Chrome para comprobar Selenium Manager de forma intencional.'
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useTestNG()
+    scanForTestClasses = false
+    include '**/SetupCheckTest.class'
 }
 
 tasks.register('doctor') {

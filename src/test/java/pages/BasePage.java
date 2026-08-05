@@ -3,6 +3,7 @@ package pages;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -35,6 +36,21 @@ public abstract class BasePage {
 
     protected WebElement find(By locator) {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
+    protected List<WebElement> findAll(By locator) {
+        return driver.findElements(locator)
+                .stream()
+                .filter(WebElement::isDisplayed)
+                .toList();
+    }
+
+    protected List<WebElement> findAllPresent(By locator) {
+        return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator));
+    }
+
+    protected <T> T waitUntil(Function<WebDriver, T> condition) {
+        return wait.until(condition);
     }
 
     protected void click(By locator) {
@@ -81,5 +97,9 @@ public abstract class BasePage {
 
     protected void waitForUrlEndingWith(String path) {
         wait.until(currentDriver -> currentDriver.getCurrentUrl().endsWith(path));
+    }
+
+    protected void waitForUrl(String url) {
+        wait.until(ExpectedConditions.urlToBe(url));
     }
 }

@@ -1,5 +1,6 @@
 package steps;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import driver.DriverManager;
@@ -31,6 +32,21 @@ public class TransferSteps {
         transferPage.selectDestinationAccountByIndex(FIRST_OPTION);
     }
 
+    @Cuando("elijo la misma cuenta como origen y destino")
+    public void chooseSameAccountInBothDropdowns() {
+        transferPage.chooseSameAccountInBothDropdowns();
+    }
+
+    @Cuando("completo la transferencia con el monto {string} y la descripción {string}")
+    public void completeTransfer(String amount, String note) {
+        transferPage.completeTransfer(amount, note);
+    }
+
+    @Cuando("intento enviar la transferencia")
+    public void submitTransfer() {
+        transferPage.submit();
+    }
+
     @Entonces("la segunda opción queda seleccionada como cuenta origen")
     public void verifySecondOriginAccount() {
         assertTrue(
@@ -44,6 +60,15 @@ public class TransferSteps {
         assertTrue(
                 transferPage.isDestinationAccountSelected(FIRST_OPTION),
                 "La primera opción no quedó seleccionada como cuenta destino."
+        );
+    }
+
+    @Entonces("veo el error de cuenta destino {string}")
+    public void verifyDestinationError(String expectedMessage) {
+        assertEquals(
+                transferPage.destinationError(),
+                expectedMessage,
+                "BuggyBank no mostró la validación esperada"
         );
     }
 }

@@ -15,6 +15,15 @@ public class TransferPage extends BasePage {
             By.cssSelector("[data-testid='transfer-from']");
     private static final By DESTINATION_ACCOUNT =
             By.cssSelector("[data-testid='transfer-to']");
+    private static final By AMOUNT =
+            By.cssSelector("[data-testid='transfer-amount']");
+    private static final By NOTE =
+            By.cssSelector("[data-testid='transfer-note']");
+    private static final By SUBMIT =
+            By.cssSelector("[data-testid='transfer-submit']");
+    private static final By DESTINATION_ERROR = By.xpath(
+            "//*[@data-testid='transfer-to']/parent::label/following-sibling::p"
+    );
 
     public TransferPage(WebDriver driver) {
         super(driver);
@@ -31,6 +40,38 @@ public class TransferPage extends BasePage {
 
     public void selectDestinationAccountByIndex(int index) {
         selectByIndex(DESTINATION_ACCOUNT, index);
+    }
+
+    /**
+     * El índice es intencional: el objetivo es elegir la misma opción en ambos controles.
+     */
+    public void chooseSameAccountInBothDropdowns() {
+        selectByIndex(ORIGIN_ACCOUNT, 0);
+        selectByIndex(DESTINATION_ACCOUNT, 0);
+    }
+
+    /**
+     * Variante menos acoplada al orden de las opciones.
+     */
+    public void chooseSameAccountInBothDropdownsByValue(String value) {
+        String accountId = new Select(find(ORIGIN_ACCOUNT))
+                .getFirstSelectedOption()
+                .getAttribute(value);
+
+        selectByValue(DESTINATION_ACCOUNT, accountId);
+    }
+
+    public void completeTransfer(String amount, String note) {
+        type(AMOUNT, amount);
+        type(NOTE, note);
+    }
+
+    public void submit() {
+        click(SUBMIT);
+    }
+
+    public String destinationError() {
+        return getText(DESTINATION_ERROR);
     }
 
     public boolean isOriginAccountSelected(int index) {
