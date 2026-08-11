@@ -26,13 +26,17 @@ dependencyLocking {
     lockAllConfigurations()
 }
 
-tasks.named('test') {
+tasks.named('test', Test) {
     useTestNG()
     // Cucumber expone el test mediante una clase base de TestNG. Gradle no la
     // detecta por anotaciones, por lo que delegamos el descubrimiento a TestNG.
     scanForTestClasses = false
     include '**/*Test.class'
     exclude '**/SetupCheckTest.class'
+
+    if (project.hasProperty('cucumberTags')) {
+        systemProperty 'cucumber.filter.tags', project.property('cucumberTags')
+    }
 }
 
 tasks.register('setupCheck', Test) {

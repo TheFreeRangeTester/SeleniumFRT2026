@@ -1,25 +1,38 @@
 # Selenium WebDriver con Java y Cucumber
 
-Este template deja lista la infraestructura del curso y contiene dos ramas:
+Proyecto del curso para aprender automatización web con Selenium, Java, Cucumber y TestNG.
 
-- `main`: es el punto de partida. No contiene el framework ni la solución de los ejercicios: los vas a construir durante las clases.
-- `solution`: contiene el modelo terminado de referencia, con la estructura del framework,
-  un Page Object y una prueba funcional básica de login contra BuggyBank.
+El repositorio contiene dos ramas:
 
-## Prerrequisitos
+- `main`: punto de partida para construir el framework durante las clases.
+- `solution`: implementación de referencia con features, steps, hooks y Page Objects.
 
-- JDK 21 (comprobá que `JAVA_HOME` apunte a ese JDK).
+## Requisitos
+
+Antes de empezar, instalá:
+
+- JDK 21.
 - Google Chrome.
 - Git.
-- VS Code recomendado, con el Extension Pack for Java sugerido al abrir el proyecto.
+- VS Code (recomendado) y el Extension Pack for Java sugerido por el proyecto.
 
-No hace falta instalar Gradle globalmente: el repositorio incluye Gradle Wrapper 9.6.1.
+No instales Gradle globalmente. El proyecto incluye Gradle Wrapper 9.6.1 para que todas las personas usen la misma versión.
+
+## Usuario de prueba
+
+Las credenciales compartidas por los escenarios de `solution` se definen únicamente en:
+
+```text
+src/test/java/support/TestUser.java
+```
+
+Las features identifican al `usuario de prueba` y los steps leen el email y la contraseña desde esa clase. Para cambiar de usuario, modificá solamente `TestUser`; no copies las credenciales dentro de archivos `.feature` ni de otros steps.
 
 ## Crear y clonar tu repositorio
 
-1. En GitHub, pulsá **Use this template** y luego **Create a new repository**.
-2. Elegí el nombre y la visibilidad y seleccioná **Include all branches** para recibir tanto `main` como `solution`.
-3. Copiá la URL de tu repositorio y clonalo:
+1. En GitHub, seleccioná **Use this template** y después **Create a new repository**.
+2. Marcá **Include all branches** si querés recibir también la rama `solution`.
+3. Copiá la URL de tu repositorio y ejecutá:
 
 ```bash
 git clone URL_DE_TU_REPOSITORIO
@@ -28,21 +41,23 @@ git branch --all
 git switch main
 ```
 
-Trabajá normalmente sobre `main`. La rama `solution` es una referencia para consultar cuando se indique durante el curso:
+Trabajá sobre `main`. Cuando el curso indique consultar la solución, podés cambiar de rama:
 
 ```bash
 git switch solution
 ```
 
-Para volver al punto de trabajo:
+Para regresar a tu trabajo:
 
 ```bash
 git switch main
 ```
 
-Si no tenés cuenta de GitHub, podés descargar cada rama por separado mediante **Code → Download ZIP**. En ese caso no tendrás historial ni sincronización mediante Git.
+Si no usás GitHub, podés descargar la rama que necesites mediante **Code → Download ZIP**. El ZIP no incluye historial ni sincronización con Git.
 
 ## Verificar el entorno
+
+Abrí una terminal en la carpeta raíz del proyecto, donde están `build.gradle`, `gradlew` y `gradlew.bat`.
 
 En macOS o Linux:
 
@@ -50,62 +65,177 @@ En macOS o Linux:
 java -version
 ./gradlew --version
 ./gradlew doctor
-./gradlew test
 ```
 
-En Windows (PowerShell o Símbolo del sistema):
+En PowerShell:
+
+```powershell
+java -version
+.\gradlew.bat --version
+.\gradlew.bat doctor
+```
+
+En CMD:
 
 ```bat
 java -version
 gradlew.bat --version
 gradlew.bat doctor
+```
+
+La salida debe mostrar Java 21. La primera ejecución del Wrapper puede descargar Gradle y tardar un poco más.
+
+### Comprobar Selenium y Chrome
+
+El chequeo técnico es intencional y está separado de la suite normal:
+
+```bash
+./gradlew setupCheck
+```
+
+En PowerShell usá `.\gradlew.bat setupCheck`; en CMD, `gradlew.bat setupCheck`.
+
+`setupCheck` deja que Selenium Manager resuelva ChromeDriver, abre Chrome, verifica una página local y cierra el navegador. No hace falta descargar ChromeDriver manualmente.
+
+## Ejecutar las pruebas
+
+### Todos los escenarios
+
+macOS o Linux:
+
+```bash
+./gradlew test
+```
+
+PowerShell:
+
+```powershell
+.\gradlew.bat test
+```
+
+CMD:
+
+```bat
 gradlew.bat test
 ```
 
-`SetupCheckTest` crea `ChromeDriver` sin indicar una ruta de driver, deja que Selenium Manager lo resuelva, abre Chrome, carga contenido local, comprueba el título con TestNG y siempre cierra el navegador.
+### Filtrar por tags
+
+El proyecto usa este contrato:
+
+```text
+-PcucumberTags='expresión' → tarea test → cucumber.filter.tags → Cucumber
+```
+
+Un tag:
+
+```bash
+./gradlew test -PcucumberTags='@smoke'
+```
+
+Expresiones útiles:
+
+```bash
+./gradlew test -PcucumberTags='@smoke and not @wip'
+./gradlew test -PcucumberTags='@smoke or @regression'
+./gradlew test -PcucumberTags='(@smoke or @regression) and not @wip'
+```
+
+En PowerShell reemplazá `./gradlew` por `.\gradlew.bat`. En CMD usá `gradlew.bat` y comillas dobles:
+
+```bat
+gradlew.bat test -PcucumberTags="@smoke or @regression"
+```
+
+Usá siempre comillas normales alrededor de la expresión, especialmente si contiene espacios o paréntesis.
+
+### Repetir una demostración
+
+Si Gradle informa `UP-TO-DATE`, forzá una nueva ejecución con:
+
+```bash
+./gradlew test --rerun-tasks -PcucumberTags='@smoke'
+```
+
+`--rerun-tasks` es útil para diagnóstico o demostraciones; no hace falta agregarlo a cada ejecución.
+
+## Verificar cuántos escenarios corrieron
+
+Un `BUILD SUCCESSFUL` no alcanza para demostrar que el filtro funcionó: la ejecución también puede haber encontrado cero escenarios.
+
+Después de cada comando:
+
+1. Revisá el resumen de Cucumber en la terminal.
+2. Confirmá el número de escenarios ejecutados.
+3. Abrí los reportes generados.
+
+Reportes principales:
+
+- TestNG/Gradle: `build/reports/tests/test/index.html`.
+- Cucumber HTML: `build/reports/cucumber/cucumber.html`.
+- Cucumber JSON: `build/reports/cucumber/cucumber.json`.
 
 ## Problemas frecuentes
 
+### Gradle dice que la tarea no existe
+
+Confirmá que la terminal esté en la raíz del proyecto y listá las tareas disponibles:
+
+```bash
+./gradlew tasks --group verification
+```
+
+### El build termina bien, pero ejecuta cero escenarios
+
+- Confirmá que el runner extienda `AbstractTestNGCucumberTests`.
+- Confirmá que la tarea `test` use TestNG.
+- Revisá las rutas de `features` y `glue` en el runner.
+- Revisá que el tag exista, incluyendo la arroba.
+- Ejecutá con información adicional:
+
+```bash
+./gradlew test --info -PcucumberTags='@smoke'
+```
+
+### Ejecuta todos los escenarios e ignora el filtro
+
+- Usá `-P` con `P` mayúscula.
+- Escribí exactamente `cucumberTags`.
+- No agregues un filtro `tags = "..."` fijo en `@CucumberOptions`.
+- Conservá la expresión completa entre comillas.
+
+### Otros problemas de setup
+
 - **Java no es 21:** instalá JDK 21 y volvé a abrir la terminal.
-- **`JAVA_HOME` incorrecto:** hacelo apuntar a la carpeta del JDK 21 y comprobá de nuevo `java -version`.
+- **`JAVA_HOME` es incorrecto:** apuntalo al JDK 21 y repetí `java -version` y el diagnóstico.
 - **`Permission denied` al usar `gradlew`:** ejecutá `chmod +x gradlew`.
-- **Chrome no está instalado:** instalalo y repetí `./gradlew test`.
-- **Selenium Manager no puede resolver ChromeDriver:** revisá la conexión, proxy o firewall; luego repetí el test. No descargues ni configures ChromeDriver manualmente.
-
-## Qué está preparado y qué vas a construir
-
-La rama `main` ya incluye Java Toolchain 21, Gradle Wrapper, Selenium, Cucumber integrado con TestNG, descubrimiento de tests y el diagnóstico `doctor`.
-
-Durante el curso vas a crear los feature files, escenarios, step definitions, hooks, Page Objects y el resto del framework. Nada de eso viene resuelto acá.
-
-La rama `solution` muestra cómo organizar el ciclo de vida de WebDriver, los hooks, el
-runner y las clases base del Page Object Model. También incluye un ejemplo mínimo de
-login y validación del dashboard para los tres usuarios sandbox.
+- **Chrome no está instalado:** instalalo y repetí `setupCheck`.
+- **Selenium Manager no resuelve ChromeDriver:** revisá la conexión, el proxy o el firewall. No configures un driver manualmente.
+- **Falla solamente en una terminal:** evitá comillas tipográficas y copiá el comando y el error completos.
 
 ## Estructura de referencia de `solution`
 
-En esta rama, el modelo queda separado por responsabilidades:
-
 ```text
 src/test/java/
-├── driver/DriverManager.java
-├── hooks/Hooks.java
-├── pages/BasePage.java
-├── pages/LoginPage.java
-├── runner/RunCucumberTest.java
-├── setup/SetupCheckTest.java
-└── steps/LoginSteps.java
+├── components/
+├── driver/
+├── hooks/
+├── models/
+├── pages/
+├── runner/
+├── setup/
+├── support/
+└── steps/
 
 src/test/resources/
 ├── cucumber.properties
-└── features/login.feature
+└── features/
 ```
 
-- `DriverManager` crea una instancia de WebDriver por hilo y permite que los escenarios sean independientes.
-- `Hooks` abre Chrome antes de cada escenario, adjunta una captura si falla y siempre cierra el navegador.
-- `BasePage` recibe el driver por constructor y ofrece esperas y acciones Selenium reutilizables.
-- `LoginPage` encapsula los elementos y acciones del login, además de la validación del dashboard.
-- `LoginSteps` conecta el lenguaje Gherkin con el Page Object.
-- `login.feature` parametriza el mismo flujo para los tres usuarios sandbox.
-- `RunCucumberTest` integra Cucumber con TestNG y genera reportes HTML y JSON dentro de `build/reports/cucumber`.
-- `SetupCheckTest` sigue siendo únicamente una comprobación técnica del entorno.
+- `driver` administra el ciclo de vida de WebDriver.
+- `hooks` abre y cierra Chrome por escenario y adjunta una captura cuando hay un fallo.
+- `pages` contiene acciones y estado de las páginas, sin assertions.
+- `steps` conecta Gherkin con los Page Objects y realiza las verificaciones.
+- `runner` integra Cucumber con TestNG y configura los reportes.
+- `support` contiene el único usuario de prueba compartido por los escenarios.
+- `features` contiene los escenarios y sus tags.

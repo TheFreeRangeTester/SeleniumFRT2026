@@ -9,7 +9,6 @@ import driver.DriverManager;
 import io.cucumber.java.es.Cuando;
 import io.cucumber.java.es.Dado;
 import io.cucumber.java.es.Entonces;
-import pages.LoginPage;
 import pages.TransactionsPage;
 
 public class TransactionsSteps {
@@ -17,13 +16,6 @@ public class TransactionsSteps {
     private TransactionsPage transactionsPage;
     private List<String> visibleDirections;
     private List<String> visibleDescriptions;
-
-    @Dado("que Maria inició sesión en BuggyBank con el email {string} y la contraseña {string}")
-    public void loginAsMaria(String email, String password) {
-        LoginPage loginPage = new LoginPage(DriverManager.getDriver());
-        loginPage.open();
-        loginPage.loginAs(email, password);
-    }
 
     @Dado("está en la página de movimientos")
     public void openTransactionsPage() {
