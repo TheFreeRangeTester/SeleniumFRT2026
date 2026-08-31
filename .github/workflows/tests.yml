@@ -22,6 +22,8 @@ jobs:
     timeout-minutes: 20
 
     env:
+      CUCUMBER_PUBLISH_ENABLED: "true"
+      CUCUMBER_PUBLISH_QUIET: "false"
       HEADLESS: "true"
       TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
@@ -50,7 +52,28 @@ jobs:
           fi
 
       - name: Ejecutar la suite completa
-        run: ./gradlew clean test --no-daemon
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew clean test --no-daemon 2>&1 | tee "$RUNNER_TEMP/cucumber-run.log"
+
+      - name: Publicar enlace del reporte en el resumen
+        if: always()
+        shell: bash
+        run: |
+          report_url="$(grep -Eo 'https://reports\.cucumber\.io/reports/[[:alnum:]-]+' "$RUNNER_TEMP/cucumber-run.log" 2>/dev/null | tail -n 1 || true)"
+
+          if [[ -n "$report_url" ]]; then
+            {
+              echo "## Reporte de Cucumber"
+              echo
+              echo "[Abrir el reporte publicado]($report_url)"
+              echo
+              echo "> Es público para quien tenga el enlace y Cucumber lo elimina automáticamente después de 24 horas."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::Cucumber no devolvió una URL de reporte publicado. Revisá el log del paso de pruebas."
+          fi
 
       - name: Guardar reportes
         if: always()

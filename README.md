@@ -193,7 +193,9 @@ Antes de la primera ejecución, creá estos dos secretos en **Settings → Secre
 - `TEST_USER_EMAIL`
 - `TEST_USER_PASSWORD`
 
-GitHub Actions usa Java 21, el Gradle Wrapper del repositorio y Chrome en modo headless. Al finalizar, conserva durante siete días un artifact llamado `reportes-pruebas` con los reportes HTML, JSON, JUnit XML y TestNG/Gradle, incluso cuando la suite falla.
+GitHub Actions usa Java 21, el Gradle Wrapper del repositorio y Chrome en modo headless. Cada ejecución publica temporalmente el resultado en Cucumber Reports y deja el enlace clickeable en el resumen del job. Cualquier persona que tenga ese enlace puede abrirlo; el servicio elimina el reporte automáticamente después de 24 horas y puede mostrar las capturas adjuntas por escenarios fallidos.
+
+Como respaldo, el workflow conserva durante siete días un artifact llamado `reportes-pruebas` con los reportes HTML, JSON, JUnit XML y TestNG/Gradle, incluso cuando la suite falla. Antes de compartir un reporte o artifact, revisá que sus escenarios y capturas no expongan datos sensibles.
 
 Los secretos de un repositorio no se comparten con workflows disparados por pull requests desde forks. En ese caso, la verificación de credenciales falla de forma explícita antes de abrir Chrome.
 
