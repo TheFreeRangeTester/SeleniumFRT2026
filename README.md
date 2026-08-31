@@ -20,13 +20,21 @@ No instales Gradle globalmente. El proyecto incluye Gradle Wrapper 9.6.1 para qu
 
 ## Usuario de prueba
 
-Las credenciales compartidas por los escenarios de `solution` se definen únicamente en:
+Las credenciales compartidas por los escenarios de `solution` se reciben mediante estas variables de entorno:
 
 ```text
-src/test/java/support/TestUser.java
+TEST_USER_EMAIL
+TEST_USER_PASSWORD
 ```
 
-Las features identifican al `usuario de prueba` y los steps leen el email y la contraseña desde esa clase. Para cambiar de usuario, modificá solamente `TestUser`; no copies las credenciales dentro de archivos `.feature` ni de otros steps.
+Las features identifican al `usuario de prueba` y los steps leen esas variables mediante `TestUser`. No copies credenciales dentro del repositorio, los archivos `.feature`, los comandos compartidos ni los reportes.
+
+Antes de ejecutar la suite localmente, definilas en tu terminal. Por ejemplo, en macOS o Linux:
+
+```bash
+export TEST_USER_EMAIL='EMAIL_DEL_USUARIO_DE_PRUEBA'
+export TEST_USER_PASSWORD='PASSWORD_DEL_USUARIO_DE_PRUEBA'
+```
 
 ## Crear y clonar tu repositorio
 
@@ -174,6 +182,20 @@ Reportes principales:
 - TestNG/Gradle: `build/reports/tests/test/index.html`.
 - Cucumber HTML: `build/reports/cucumber/cucumber.html`.
 - Cucumber JSON: `build/reports/cucumber/cucumber.json`.
+- Cucumber JUnit XML para CI: `build/test-results/cucumber/cucumber.xml`.
+
+## Integración continua con GitHub Actions
+
+El workflow `.github/workflows/tests.yml` ejecuta la suite completa en cada `push`, en cada `pull_request` y cuando se inicia manualmente desde **Actions → Pruebas Selenium → Run workflow**.
+
+Antes de la primera ejecución, creá estos dos secretos en **Settings → Secrets and variables → Actions**:
+
+- `TEST_USER_EMAIL`
+- `TEST_USER_PASSWORD`
+
+GitHub Actions usa Java 21, el Gradle Wrapper del repositorio y Chrome en modo headless. Al finalizar, conserva durante siete días un artifact llamado `reportes-pruebas` con los reportes HTML, JSON, JUnit XML y TestNG/Gradle, incluso cuando la suite falla.
+
+Los secretos de un repositorio no se comparten con workflows disparados por pull requests desde forks. En ese caso, la verificación de credenciales falla de forma explícita antes de abrir Chrome.
 
 ## Problemas frecuentes
 

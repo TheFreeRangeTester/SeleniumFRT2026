@@ -9,7 +9,8 @@ import io.cucumber.testng.CucumberOptions;
         plugin = {
                 "pretty",
                 "html:build/reports/cucumber/cucumber.html",
-                "json:build/reports/cucumber/cucumber.json"
+                "json:build/reports/cucumber/cucumber.json",
+                "junit:build/test-results/cucumber/cucumber.xml"
         },
         monochrome = true
 )

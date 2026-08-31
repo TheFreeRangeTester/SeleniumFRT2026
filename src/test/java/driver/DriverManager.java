@@ -2,6 +2,7 @@ package driver;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 /**
  * Administra una instancia de WebDriver por hilo de ejecución.
@@ -22,8 +23,19 @@ public final class DriverManager {
             throw new IllegalStateException("Ya existe un WebDriver activo para este escenario.");
         }
 
+        ChromeOptions options = new ChromeOptions();
+
+        if (Boolean.parseBoolean(System.getenv().getOrDefault("HEADLESS", "false"))) {
+            options.addArguments(
+                    "--headless=new",
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--window-size=1440,900"
+            );
+        }
+
         // Selenium Manager resuelve ChromeDriver automáticamente.
-        DRIVER.set(new ChromeDriver());
+        DRIVER.set(new ChromeDriver(options));
     }
 
     public static WebDriver getDriver() {

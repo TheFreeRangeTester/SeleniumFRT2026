@@ -28,6 +28,10 @@ dependencyLocking {
 
 tasks.named('test', Test) {
     useTestNG()
+    // Cucumber escribe la URL del reporte publicado en la salida del test.
+    // Gradle la oculta por defecto cuando la ejecución termina correctamente.
+    testLogging.showStandardStreams = true
+
     // Cucumber expone el test mediante una clase base de TestNG. Gradle no la
     // detecta por anotaciones, por lo que delegamos el descubrimiento a TestNG.
     scanForTestClasses = false

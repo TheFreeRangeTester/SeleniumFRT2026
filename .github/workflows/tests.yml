@@ -1,0 +1,64 @@
+name: Pruebas Selenium
+
+on:
+  push:
+    branches:
+      - main
+      - solution
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pruebas-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pruebas:
+    name: Java 21, Chrome headless y Gradle
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      HEADLESS: "true"
+      TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v6
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Configurar y validar Gradle Wrapper
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+
+      - name: Verificar secretos requeridos
+        shell: bash
+        run: |
+          if [[ -z "$TEST_USER_EMAIL" || -z "$TEST_USER_PASSWORD" ]]; then
+            echo "Faltan los secrets TEST_USER_EMAIL y/o TEST_USER_PASSWORD." >&2
+            exit 1
+          fi
+
+      - name: Ejecutar la suite completa
+        run: ./gradlew clean test --no-daemon
+
+      - name: Guardar reportes
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reportes-pruebas
+          path: |
+            build/reports/
+            build/test-results/
+          if-no-files-found: warn
+          retention-days: 7
