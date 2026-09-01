@@ -6,7 +6,6 @@ pipeline {
         disableConcurrentBuilds(abortPrevious: true)
         buildDiscarder(logRotator(daysToKeepStr: '7', artifactDaysToKeepStr: '7'))
         skipDefaultCheckout(true)
-        timestamps()
     }
 
     environment {
@@ -62,7 +61,7 @@ pipeline {
             script {
                 if (fileExists('cucumber-run.log')) {
                     def reportUrls = readFile('cucumber-run.log').findAll(
-                        /https:\/\/reports\.cucumber\.io\/reports\/[A-Za-z0-9-]+/
+                        'https://reports[.]cucumber[.]io/reports/[A-Za-z0-9-]+'
                     )
 
                     if (reportUrls) {
