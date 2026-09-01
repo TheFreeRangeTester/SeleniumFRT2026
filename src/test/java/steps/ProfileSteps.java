@@ -24,7 +24,7 @@ public class ProfileSteps {
 
         softly.assertEquals(
                 profilePage.name(),
-                "Permanent Tester",
+                "Temporary Tester",
                 "Nombre inesperado"
         );
         softly.assertEquals(
@@ -34,7 +34,7 @@ public class ProfileSteps {
         );
         softly.assertEquals(
                 profilePage.phone(),
-                "+64 21 000 0001",
+                "+64 21 000 0000",
                 "Teléfono inesperado"
         );
         softly.assertEquals(

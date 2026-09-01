@@ -66,14 +66,14 @@ pipeline {
         always {
             script {
                 if (fileExists('cucumber-run.log')) {
-                    def reportUrls = readFile('cucumber-run.log').findAll(
-                        'https://reports[.]cucumber[.]io/reports/[A-Za-z0-9-]+'
-                    )
+                    sh '''#!/usr/bin/env bash
+                        grep -Eo 'https://reports[.]cucumber[.]io/reports/[[:alnum:]-]+' cucumber-run.log \
+                            | tail -n 1 > cucumber-report-url.txt || true
+                    '''
+                    def reportUrl = readFile('cucumber-report-url.txt').trim()
 
-                    if (reportUrls) {
-                        def reportUrl = reportUrls.last()
+                    if (reportUrl) {
                         currentBuild.description = "Cucumber: ${reportUrl}"
-                        writeFile file: 'cucumber-report-url.txt', text: "${reportUrl}\n"
                         echo "Reporte público de Cucumber (disponible durante 24 horas): ${reportUrl}"
                     } else {
                         echo 'Cucumber no devolvió una URL de reporte publicado. Revisá el log de la ejecución.'
