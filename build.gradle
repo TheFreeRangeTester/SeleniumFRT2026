@@ -28,6 +28,15 @@ dependencyLocking {
 
 tasks.named('test', Test) {
     useTestNG()
+
+    // En Linux ARM, Selenium Manager no incluye un binario compatible.
+    // El Jenkins efímero instala ChromiumDriver y expone su ruta; en el
+    // resto de los entornos se conserva Selenium Manager automáticamente.
+    def chromeDriverPath = System.getenv('CHROMEDRIVER_PATH')
+    if (chromeDriverPath) {
+        systemProperty 'webdriver.chrome.driver', chromeDriverPath
+    }
+
     // Cucumber escribe la URL del reporte publicado en la salida del test.
     // Gradle la oculta por defecto cuando la ejecución termina correctamente.
     testLogging.showStandardStreams = true

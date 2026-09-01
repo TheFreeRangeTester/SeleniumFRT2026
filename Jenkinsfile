@@ -11,6 +11,7 @@ pipeline {
     environment {
         CUCUMBER_PUBLISH_ENABLED = 'true'
         CUCUMBER_PUBLISH_QUIET = 'false'
+        CHROMEDRIVER_PATH = '/usr/bin/chromedriver'
         HEADLESS = 'true'
     }
 
@@ -32,6 +33,11 @@ pipeline {
                     set -euo pipefail
                     java -version
                     google-chrome --version
+
+                    if [[ -n "${CHROMEDRIVER_PATH:-}" ]]; then
+                        test -x "$CHROMEDRIVER_PATH"
+                        "$CHROMEDRIVER_PATH" --version
+                    fi
 
                     if [[ -z "$TEST_USER_EMAIL" || -z "$TEST_USER_PASSWORD" ]]; then
                         echo "Faltan las credenciales TEST_USER_EMAIL y/o TEST_USER_PASSWORD." >&2

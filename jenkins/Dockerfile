@@ -3,7 +3,7 @@ FROM jenkins/jenkins:lts-jdk21
 USER root
 
 RUN apt-get update \
-    && apt-get install --yes --no-install-recommends chromium git \
+    && apt-get install --yes --no-install-recommends chromium chromium-driver git \
     && ln -s /usr/bin/chromium /usr/local/bin/google-chrome \
     && rm -rf /var/lib/apt/lists/*
 

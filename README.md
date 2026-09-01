@@ -222,7 +222,7 @@ Password: admin
 
 Estas credenciales deliberadamente simples son solamente para la grabación local. No publiques el puerto ni uses esta configuración como servidor compartido.
 
-La imagen configura automáticamente el nodo con las labels `linux` y `chrome`, incluye JDK 21 e instala Pipeline, Credentials Binding, Git, JUnit, HTML Publisher y Pipeline Stage View. El stage **Verificar el entorno** muestra las versiones reales de Java y Chromium antes de ejecutar la suite.
+La imagen configura automáticamente el nodo con las labels `linux` y `chrome`, incluye JDK 21 e instala Pipeline, Credentials Binding, Git, JUnit, HTML Publisher y Pipeline Stage View. También instala el ChromiumDriver correspondiente para poder ejecutar en Docker ARM64, donde Selenium Manager 4.46 no ofrece un binario compatible. El stage **Verificar el entorno** muestra las versiones reales de Java, Chromium y ChromiumDriver antes de ejecutar la suite.
 
 ### Cargar las credenciales de las pruebas
 
