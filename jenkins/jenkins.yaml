@@ -1,0 +1,16 @@
+jenkins:
+  systemMessage: "Jenkins efímero para la demostración de Selenium2026"
+  numExecutors: 1
+  mode: NORMAL
+  labelString: "linux chrome"
+
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_USER}"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false

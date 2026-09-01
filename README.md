@@ -199,6 +199,65 @@ Como respaldo, el workflow conserva durante siete días un artifact llamado `rep
 
 Los secretos de un repositorio no se comparten con workflows disparados por pull requests desde forks. En ese caso, la verificación de credenciales falla de forma explícita antes de abrir Chrome.
 
+## Integración continua con Jenkins
+
+El `Jenkinsfile` ejecuta esencialmente el mismo pipeline: usa JDK 21 y el Gradle Wrapper, verifica las credenciales, corre Chrome en modo headless, publica los resultados JUnit y conserva los reportes aunque la suite falle. También muestra la URL temporal de Cucumber Reports en el log y en la descripción del build.
+
+### Levantar el Jenkins efímero
+
+Para la demostración se incluye un Jenkins local con JDK 21, Chromium y los plugins necesarios. No usa volúmenes: cuando se elimina el contenedor también desaparecen el usuario, los jobs, las credenciales y los builds.
+
+Con Docker Desktop iniciado, ejecutá desde la raíz del repositorio:
+
+```bash
+docker compose -f compose.jenkins.yml up --build
+```
+
+Cuando el log muestre que Jenkins está listo, abrí `http://localhost:8080` e ingresá con:
+
+```text
+Usuario: admin
+Password: admin
+```
+
+Estas credenciales deliberadamente simples son solamente para la grabación local. No publiques el puerto ni uses esta configuración como servidor compartido.
+
+La imagen configura automáticamente el nodo con las labels `linux` y `chrome`, incluye JDK 21 e instala Pipeline, Credentials Binding, Git, JUnit, HTML Publisher y Pipeline Stage View. El stage **Verificar el entorno** muestra las versiones reales de Java y Chromium antes de ejecutar la suite.
+
+### Cargar las credenciales de las pruebas
+
+Entrá en **Manage Jenkins → Credentials → System → Global credentials → Add Credentials** y creá dos credenciales de tipo **Secret text**. El ID debe coincidir exactamente con el nombre indicado:
+
+- `TEST_USER_EMAIL`
+- `TEST_USER_PASSWORD`
+
+No escribas esos valores en el `Jenkinsfile`, las features, los comandos compartidos ni los logs.
+
+### Crear y ejecutar el job
+
+El `Jenkinsfile` debe estar confirmado y disponible en el repositorio remoto antes de crear el job.
+
+1. Seleccioná **New Item**.
+2. Escribí `Selenium2026`, elegí **Pipeline** y seleccioná **OK**.
+3. En **Pipeline → Definition**, elegí **Pipeline script from SCM**.
+4. Seleccioná **Git** y cargá la URL del repositorio.
+5. Indicá la rama que contiene el `Jenkinsfile`, por ejemplo `*/solution`.
+6. Dejá `Jenkinsfile` como **Script Path**, guardá y seleccioná **Build Now**.
+
+Cada build ofrece tres niveles de evidencia:
+
+- **Test Result**: resultados JUnit interpretados por Jenkins.
+- **Reporte Cucumber**: HTML local publicado por HTML Publisher y conservado por build.
+- **Artifacts**: HTML, JSON, XML, reportes de Gradle/TestNG, log y URL pública temporal.
+
+La URL de `reports.cucumber.io` es pública para quien la conozca, puede incluir capturas de fallos y vence después de 24 horas. El Pipeline descarta builds y artifacts después de siete días, aunque normalmente este entorno se eliminará antes.
+
+Para detenerlo y borrar completamente la instancia de Jenkins:
+
+```bash
+docker compose -f compose.jenkins.yml down
+```
+
 ## Problemas frecuentes
 
 ### Gradle dice que la tarea no existe

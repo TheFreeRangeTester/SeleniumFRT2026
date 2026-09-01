@@ -1,0 +1,11 @@
+services:
+  jenkins:
+    build:
+      context: ./jenkins
+    container_name: selenium2026-jenkins
+    environment:
+      JENKINS_ADMIN_PASSWORD: admin
+      JENKINS_ADMIN_USER: admin
+    ports:
+      - "127.0.0.1:8080:8080"
+    shm_size: "2gb"
